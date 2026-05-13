@@ -1,6 +1,7 @@
 import {
   IsArray,
   IsBoolean,
+  IsObject,
   IsIn,
   IsNumber,
   IsOptional,
@@ -17,6 +18,16 @@ export class ChatMessageDto {
   @IsString()
   @MaxLength(4_000)
   content!: string;
+}
+
+export class ChatCompletionOptionsDto {
+  @IsString()
+  @MaxLength(180)
+  A!: string;
+
+  @IsString()
+  @MaxLength(180)
+  B!: string;
 }
 
 export class ChatCompletionDto {
@@ -36,4 +47,29 @@ export class ChatCompletionDto {
   @IsOptional()
   @IsNumber()
   temperature?: number;
+
+  @IsOptional()
+  @IsNumber()
+  max_tokens?: number;
+
+  @IsOptional()
+  @IsNumber()
+  top_p?: number;
+
+  @IsOptional()
+  @IsString()
+  user?: string;
+
+  @IsOptional()
+  @IsObject()
+  metadata?: Record<string, unknown>;
+
+  @IsOptional()
+  @IsObject()
+  extra_body?: Record<string, unknown>;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => ChatCompletionOptionsDto)
+  options?: ChatCompletionOptionsDto;
 }

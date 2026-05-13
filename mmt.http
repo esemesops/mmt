@@ -80,7 +80,72 @@ Content-Type: application/json
   }
 }
 
-### MMT OpenAI-Compatible: chat completions
+### MMT OpenAI-Compatible: chat completions with top-level structured options
+POST {{apiBaseUrl}}/v1/chat/completions
+Authorization: Bearer {{mmtApiKey}}
+Content-Type: application/json
+
+{
+  "model": "mmt-music-trivia",
+  "messages": [
+    {
+      "role": "user",
+      "content": "Who released Thriller?"
+    }
+  ],
+  "options": {
+    "A": "Michael Jackson",
+    "B": "Prince"
+  },
+  "temperature": 0
+}
+
+### MMT OpenAI-Compatible: chat completions with metadata.options
+POST {{apiBaseUrl}}/v1/chat/completions
+Authorization: Bearer {{mmtApiKey}}
+Content-Type: application/json
+
+{
+  "model": "mmt-music-trivia",
+  "messages": [
+    {
+      "role": "user",
+      "content": "Which artist is known as the Queen of Pop?"
+    }
+  ],
+  "metadata": {
+    "options": {
+      "A": "Madonna",
+      "B": "Celine Dion"
+    }
+  },
+  "temperature": 0
+}
+
+### MMT OpenAI-Compatible: chat completions with extra_body.options
+POST {{apiBaseUrl}}/v1/chat/completions
+Authorization: Bearer {{mmtApiKey}}
+Content-Type: application/json
+
+{
+  "model": "mmt-music-trivia",
+  "messages": [
+    {
+      "role": "user",
+      "content": "Which artist released Purple Rain?"
+    }
+  ],
+  "extra_body": {
+    "options": {
+      "A": "Prince",
+      "B": "Michael Jackson"
+    }
+  },
+  "temperature": 0,
+  "max_tokens": 1
+}
+
+### MMT OpenAI-Compatible: legacy prompt fallback
 POST {{apiBaseUrl}}/v1/chat/completions
 Authorization: Bearer {{mmtApiKey}}
 Content-Type: application/json
@@ -91,22 +156,6 @@ Content-Type: application/json
     {
       "role": "user",
       "content": "Question: Who released Thriller?\nA: Michael Jackson\nB: Prince"
-    }
-  ],
-  "temperature": 0
-}
-
-### MMT OpenAI-Compatible: another question
-POST {{apiBaseUrl}}/v1/chat/completions
-Authorization: Bearer {{mmtApiKey}}
-Content-Type: application/json
-
-{
-  "model": "mmt-music-trivia",
-  "messages": [
-    {
-      "role": "user",
-      "content": "Question: Which artist is known as the Queen of Pop?\nA: Madonna\nB: Celine Dion"
     }
   ],
   "temperature": 0
