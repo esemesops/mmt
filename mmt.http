@@ -15,8 +15,32 @@ GET {{apiBaseUrl}}/docs
 GET {{apiBaseUrl}}/docs-json
 
 ### Search: SearXNG JSON smoke test
-GET {{searxngBaseUrl}}/search?q=%22Who%20released%20Thriller%22%20%22Michael%20Jackson%22%20%22Prince%22%20music&format=json
+GET {{searxngBaseUrl}}/search
+?q=whos the king of pop
+&format=json
 Accept: application/json
+
+### Search Provider: MMT should use SearXNG by default
+# Run this through the API and inspect `mmt.sources[*].source`.
+# To test Brave later, set SEARCH_PROVIDER=brave and BRAVE_SEARCH_API_KEY in .env,
+# recreate the api container, then run the same request.
+POST {{apiBaseUrl}}/v1/chat/completions
+Authorization: Bearer {{mmtApiKey}}
+Content-Type: application/json
+
+{
+  "model": "mmt-music-trivia",
+  "messages": [
+    {
+      "role": "user",
+      "content": "Who released Thriller?"
+    }
+  ],
+  "options": {
+    "A": "Michael Jackson",
+    "B": "Prince"
+  }
+}
 
 ### LiteLLM: model list
 GET {{litellmBaseUrl}}/v1/models

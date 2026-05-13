@@ -9,7 +9,8 @@ MMT receives a music trivia question with option `A` and option `B`, searches fo
 - `apps/api`: NestJS API ingress.
 - OpenAI-compatible route: `POST /v1/chat/completions`.
 - Native trivia route: `POST /v1/trivia/answer`.
-- Search provider: SearXNG for local development, Brave Search API for production.
+- Search provider: SearXNG by default for local and production.
+- Brave Search API adapter is available behind `SEARCH_PROVIDER=brave` for a future switch.
 - LLM gateway: LiteLLM proxy.
 - Default LLM provider behind LiteLLM: OpenRouter Gemini Flash Lite.
 - Redis: repeated-question and search-result caching.
@@ -33,6 +34,24 @@ For full local stack testing, set `OPENROUTER_API_KEY` in `.env` and run:
 ```bash
 docker compose up -d
 ```
+
+## Search Providers
+
+MMT uses SearXNG by default:
+
+```env
+SEARCH_PROVIDER=searxng
+SEARXNG_BASE_URL=http://searxng:8080
+```
+
+The Brave adapter is already implemented but opt-in:
+
+```env
+SEARCH_PROVIDER=brave
+BRAVE_SEARCH_API_KEY=...
+```
+
+Do not deploy Brave by default. We will switch only if SearXNG proves too unreliable for production traffic.
 
 ## Example
 
