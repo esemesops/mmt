@@ -1,5 +1,21 @@
 {
   "$schema": "https://turborepo.com/schema.json",
+  "globalEnv": [
+    "NODE_ENV",
+    "PORT",
+    "MMT_API_KEYS",
+    "LITELLM_BASE_URL",
+    "LITELLM_API_KEY",
+    "LITELLM_MODEL",
+    "SEARCH_PROVIDER",
+    "SEARXNG_BASE_URL",
+    "BRAVE_SEARCH_API_KEY",
+    "SEARCH_RESULT_LIMIT",
+    "DATABASE_URL",
+    "REDIS_URL",
+    "CACHE_TTL_SECONDS",
+    "TURBO_TELEMETRY_DISABLED"
+  ],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
