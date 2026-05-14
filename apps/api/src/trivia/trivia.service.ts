@@ -27,13 +27,20 @@ export class TriviaService {
       };
     }
 
-    const query = this.buildQuery(normalized.question, normalized.options.A, normalized.options.B);
     const limit = this.config.get<number>("SEARCH_RESULT_LIMIT", 6);
-    const sources = this.rankSources(
-      await this.search.search(query, limit),
-      normalized.options.A,
-      normalized.options.B
+    let results = await this.search.search(
+      this.buildQuery(normalized.question, normalized.options.A, normalized.options.B),
+      limit
     );
+
+    if (results.length === 0) {
+      results = await this.search.search(
+        this.buildFallbackQuery(normalized.question, normalized.options.A, normalized.options.B),
+        limit
+      );
+    }
+
+    const sources = this.rankSources(results, normalized.options.A, normalized.options.B);
 
     const completion = await this.llm.answerTrivia({
       ...normalized,
@@ -64,7 +71,11 @@ export class TriviaService {
   }
 
   private buildQuery(question: string, optionA: string, optionB: string): string {
-    return `"${question}" "${optionA}" "${optionB}" music`;
+    return `${question} ${optionA} ${optionB} music`;
+  }
+
+  private buildFallbackQuery(question: string, optionA: string, optionB: string): string {
+    return `${optionA} ${optionB} ${question} song artist released`;
   }
 
   private rankSources(results: SearchResult[], optionA: string, optionB: string): SearchResult[] {
