@@ -5,6 +5,7 @@ import { NestFactory } from "@nestjs/core";
 import { FastifyAdapter, NestFastifyApplication } from "@nestjs/platform-fastify";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { AppModule } from "./app.module";
+import { registerTolerantJsonParser } from "./http/tolerant-json.parser";
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
@@ -47,90 +48,6 @@ async function bootstrap() {
 
   const port = config.get<number>("PORT", 4000);
   await app.listen(port, "0.0.0.0");
-}
-
-function registerTolerantJsonParser(app: NestFastifyApplication) {
-  const fastify = app.getHttpAdapter().getInstance();
-  fastify.removeContentTypeParser("application/json");
-
-  app.useBodyParser("application/json", {}, (_request, body, done) => {
-    const rawBody = body.toString("utf8");
-
-    try {
-      done(null, parseJsonBody(rawBody));
-    } catch (error) {
-      done(error as Error);
-    }
-  });
-}
-
-function parseJsonBody(rawBody: string) {
-  try {
-    return JSON.parse(rawBody) as unknown;
-  } catch (originalError) {
-    try {
-      return JSON.parse(escapeControlCharactersInJsonStrings(rawBody)) as unknown;
-    } catch {
-      throw originalError;
-    }
-  }
-}
-
-function escapeControlCharactersInJsonStrings(value: string) {
-  let result = "";
-  let inString = false;
-  let isEscaped = false;
-
-  for (let index = 0; index < value.length; index += 1) {
-    const character = value[index];
-
-    if (isEscaped) {
-      result += character;
-      isEscaped = false;
-      continue;
-    }
-
-    if (character === "\\" && inString) {
-      result += character;
-      isEscaped = true;
-      continue;
-    }
-
-    if (character === '"') {
-      result += character;
-      inString = !inString;
-      continue;
-    }
-
-    if (inString) {
-      result += escapeJsonStringCharacter(character);
-      continue;
-    }
-
-    result += character;
-  }
-
-  return result;
-}
-
-function escapeJsonStringCharacter(character: string) {
-  if (character === "\n") {
-    return "\\n";
-  }
-
-  if (character === "\r") {
-    return "\\r";
-  }
-
-  if (character === "\t") {
-    return "\\t";
-  }
-
-  if (character.charCodeAt(0) < 0x20) {
-    return `\\u${character.charCodeAt(0).toString(16).padStart(4, "0")}`;
-  }
-
-  return character;
 }
 
 void bootstrap();
