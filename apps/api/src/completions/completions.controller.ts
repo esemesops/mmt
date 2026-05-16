@@ -100,7 +100,7 @@ export class CompletionsController {
   }
 
   private extractQuestion(content: string) {
-    const labeledQuestion = this.match(content, /question\s*:\s*(.+?)(?:\n|$)/i);
+    const labeledQuestion = this.match(content, /(?:question|q)\s*[:.)-]\s*(.+?)(?:\n|$)/i);
     const question = labeledQuestion ?? content.trim();
 
     if (!question) {
@@ -111,13 +111,13 @@ export class CompletionsController {
   }
 
   private parseTriviaPrompt(content: string) {
-    const question = this.match(content, /question\s*:\s*(.+?)(?:\n|$)/i);
-    const optionA = this.match(content, /\bA\s*:\s*(.+?)(?:\n|$)/i);
-    const optionB = this.match(content, /\bB\s*:\s*(.+?)(?:\n|$)/i);
+    const question = this.match(content, /(?:question|q)\s*[:.)-]\s*(.+?)(?:\n|$)/i);
+    const optionA = this.match(content, /^\s*A\s*[:.)-]\s*(.+?)(?:\n|$)/im);
+    const optionB = this.match(content, /^\s*B\s*[:.)-]\s*(.+?)(?:\n|$)/im);
 
     if (!question || !optionA || !optionB) {
       throw new BadRequestException(
-        "Request must include structured options at options, metadata.options, extra_body.options, or use Question:/A:/B: lines"
+        "Request must include structured options at options, metadata.options, extra_body.options, or use Question/Q plus A/B lines"
       );
     }
 

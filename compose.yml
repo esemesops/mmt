@@ -21,11 +21,11 @@ services:
   litellm:
     image: ghcr.io/berriai/litellm:main-latest
     command: ["--config", "/app/config.yaml", "--port", "4000"]
-    env_file:
-      - .env
     environment:
       LITELLM_MASTER_KEY: ${LITELLM_API_KEY:-dev_litellm_master_key}
-      DATABASE_URL: postgresql://mmt:mmt@postgres:5432/mmt
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY}
+      OR_SITE_URL: ${OR_SITE_URL:-https://github.com/nwangasam/mmt}
+      OR_APP_NAME: ${OR_APP_NAME:-MMT}
     ports:
       - "4001:4000"
     volumes:
