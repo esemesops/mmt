@@ -62,7 +62,7 @@ export class LlmGatewayService {
     const evidence = input.evidence
       .map(
         (item, index) =>
-          `${index + 1}. Title: ${item.title}\nSnippet: ${item.snippet}\nSource: ${item.source}\nURL: ${item.url}`
+          `${index + 1}. Title: ${item.title}\nSnippet: ${item.snippet}\nSource: ${item.source}`
       )
       .join("\n\n");
 

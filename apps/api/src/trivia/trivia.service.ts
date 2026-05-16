@@ -7,6 +7,9 @@ import { SearchResult } from "../search/search.types";
 import { AnswerTriviaDto } from "./dto/answer-trivia.dto";
 import { TriviaAnswer } from "./trivia.types";
 
+const LLM_EVIDENCE_LIMIT = 3;
+const RESPONSE_SOURCE_LIMIT = 5;
+
 @Injectable()
 export class TriviaService {
   constructor(
@@ -44,12 +47,12 @@ export class TriviaService {
 
     const completion = await this.llm.answerTrivia({
       ...normalized,
-      evidence: sources.slice(0, 5)
+      evidence: sources.slice(0, LLM_EVIDENCE_LIMIT)
     });
 
     const answer: Omit<TriviaAnswer, "cached"> = {
       ...completion,
-      sources: sources.slice(0, 5)
+      sources: sources.slice(0, RESPONSE_SOURCE_LIMIT)
     };
 
     await this.cache.setJson(answerKey, answer);
